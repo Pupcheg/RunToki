@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'java-gradle-plugin'
+}
+
+def targetJavaVersion = 17
+
+group = 'me.supcheg'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation 'com.google.code.gson:gson:2.10.1'
+    def lombokDependency = 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor lombokDependency
+    compileOnly lombokDependency
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testAnnotationProcessor lombokDependency
+    testCompileOnly lombokDependency
+}
+
+test {
+    useJUnitPlatform()
+}
+
+gradlePlugin {
+    plugins {
+        runToki {
+            id = 'me.supcheg.runtoki'
+            implementationClass = 'me.supcheg.runtoki.RunTokiPlugin'
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion(targetJavaVersion)
+    targetCompatibility = JavaVersion.toVersion(targetJavaVersion)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release.set(targetJavaVersion)
+    options.encoding = 'UTF-8'
+    sourceCompatibility = targetJavaVersion
+    targetCompatibility = targetJavaVersion
+}
